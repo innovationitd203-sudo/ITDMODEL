@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>3D Model AR Viewer with Hotspots</title>
+
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      margin: 0;
+      background: #f0f0f0;
+      text-align: center;
+    }
+
+    model-viewer {
+      width: 100%;
+      max-width: 900px;
+      height: 500px;
+      background: #ddd;
+      margin: 20px auto;
+      border-radius: 12px;
+    }
+
+    /* จุดสีเขียว (Hotspot Button) */
+    .hotspot-btn {
+      width: 12px; /* 🟢 ปรับขนาดให้ใหญ่ขึ้นเล็กน้อย */
+      height: 12px;
+      background: #00ff00;
+      border: 2px solid white;
+      border-radius: 50%;
+      box-shadow: 0 0 10px rgba(0,0,0,0.4);
+      cursor: pointer;
+      /* 💡 ปรับขนาดในโหมด AR (เผื่อไว้) */
+      --min-hotspot-opacity: 0; 
+      --max-hotspot-opacity: 1;
+    }
+
+    /* กล่องข้อความ (Info Box) */
+    #infoBox {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: white;
+      padding: 18px 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      font-size: 1rem;
+      display: none;
+      z-index: 1000;
+      max-width: 90%;
+      text-align: left;
+    }
+
+    #closeBtn {
+      margin-top: 10px;
+      padding: 5px 12px;
+      border: none;
+      background: #ff6600;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      display: block;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+
+<h2>ห้องปฏิบัติการประชุมของสาขา</h2>
+
+<model-viewer id="viewer"
+  src="https://dl.dropboxusercontent.com/scl/fi/8crt5olmdnh2b7z5fwkqn/room502endActive.glb"
+
+  ios-src=""
+  ar
+  ar-modes="webxr scene-viewer quick-look"
+  camera-controls
+  animation-loop
+  autoplay
+  environment-image="neutral"
+  ar-scale="fixed" >
+
+    <button
+    class="hotspot-btn"
+    slot="hotspot-hotspot1"
+    data-position="6.6 1.5 -5.2"
+    data-normal="0 1 0"
+    data-info="ถังขยะเซ็นเซอร์ ทําเองถังงานแสงอาทิตย์">
+  </button>
+  
+    <button
+    class="hotspot-btn"
+    slot="hotspot-hotspot2"
+    data-position="6 1.5 -0.5"
+    data-normal="0 1 0"
+    data-info="หุ่นยนต์ส่งของเคลื่อนที่">
+  </button>
+
+    <button
+    class="hotspot-btn"
+    slot="hotspot-hotspot3"
+    data-position="2 1.9 -4.4"
+    data-normal="0 1 0"
+    data-info="หุ่นยนต์ขับเคลื่อนด้วยพลังงานแสงอาทิตย์">
+  </button>
+
+
+<div id="infoBox">
+  <span id="infoText"></span><br>
+  <button id="closeBtn">ปิด</button>
+</div>
+
+</model-viewer>
+
+<script>
+  // คลิก hotspot
+  document.querySelectorAll(".hotspot-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const text = btn.getAttribute("data-info");
+      document.getElementById("infoText").innerText = text;
+      document.getElementById("infoBox").style.display = "block";
+    });
+  });
+
+  // ปิดข้อความ
+  document.getElementById("closeBtn").onclick = () => {
+    document.getElementById("infoBox").style.display = "none";
+  };
+</script>
+
+</body>
+</html>
+
+
+

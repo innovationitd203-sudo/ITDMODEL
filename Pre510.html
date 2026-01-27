@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>3D Model AR Viewer with Hotspots</title>
+
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      margin: 0;
+      background: #f0f0f0;
+      text-align: center;
+    }
+
+    model-viewer {
+      width: 100%;
+      max-width: 900px;
+      height: 500px;
+      background: #ddd;
+      margin: 20px auto;
+      border-radius: 12px;
+    }
+
+    .hotspot-btn {
+  width: 18px;
+  height: 18px;
+  background: #00ff00;
+  border: 3px solid white;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+  pointer-events: all;   
+  transform: none !important;  /* ป้องกัน model-viewer บิดปุ่ม */
+  contain: layout style paint;
+}
+
+    /* กล่องข้อความ */
+    #infoBox {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: white;
+      padding: 18px 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      font-size: 1rem;
+      display: none;
+      max-width: 300px;
+      z-index: 1000;
+      text-align: left;
+    }
+
+    #closeBtn, #moreBtn {
+      margin-top: 10px;
+      padding: 6px 14px;
+      border: none;
+      background: #ff6600;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    #moreText {
+      display: none;
+      margin-top: 10px;
+      color: #333;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+
+<h2>ห้องปฏิบัติการ AIoT</h2>
+
+<model-viewer id="viewer"
+      src="https://modelagency.pw/roomtescont510Active.glb"
+    ios-src="https://modelagency.pw/roomtescont510Actions.usdz"
+  ar
+  ar-modes="webxr scene-viewer quick-look"
+  camera-controls
+  animation-loop /* 🟢 FIX: เล่นอนิเมชั่นวนซ้ำ */
+  autoplay /* 🟢 FIX: เริ่มเล่นอนิเมชั่นทันที */
+  environment-image="neutral"
+>
+
+  <!-- ⭐ Hotspot จุดสีเขียว -->
+  <button
+    class="hotspot-btn"
+    slot="hotspot-hotspot1"
+    data-position="5 1.5 -3"
+    data-normal="0 1 0"
+    data-info="LEGO Education SPIKE Prime"
+    data-more=" ชุดอุปกรณ์การเรียนรู้ STEAM ที่ผสมผสานตัวต่อ LEGO สีสันสดใสกับฮาร์ดแวร์ที่ควบคุมด้วยโปรแกรมแบบลากและวาง (Drag-and-drop) บนแพลตฟอร์มที่ใช้ Scratch เป็นหลัก และ Python ได้ เพื่อให้นักเรียนสร้างสรรค์หุ่นยนต์ แก้ปัญหา และเรียนรู้ทักษะการคิดวิเคราะห์"
+  ></button>
+
+  <!-- ⭐ Hotspot จุดสีเขียว -->
+  <button
+    class="hotspot-btn"
+    slot="hotspot-hotspot2"
+    data-position="1.8 2 -3"
+    data-normal="0 1 0"
+    data-info="สนามแข่งขัน WRO RoboMission"
+    data-more="เป็นสนามที่กำหนดภารกิจให้นักเรียนใช้หุ่นยนต์ที่สร้างจากชุด LEGO (เช่น SPIKE Prime) เพื่อปฏิบัติการต่าง ๆ ภายในเวลาที่กำหนด"
+  ></button>
+
+<!-- 🔶 กล่องข้อความ -->
+<div id="infoBox">
+  <span id="infoText"></span><br>
+
+  <button id="moreBtn">เพิ่มเติม</button>
+
+  <div id="moreText"></div>
+
+  <button id="closeBtn">ปิด</button>
+</div>
+
+
+<script>
+  const infoBox = document.getElementById("infoBox");
+  const infoText = document.getElementById("infoText");
+  const moreText = document.getElementById("moreText");
+  const moreBtn = document.getElementById("moreBtn");
+
+  document.querySelectorAll(".hotspot-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      infoText.innerText = btn.dataset.info;
+      moreText.innerText = btn.dataset.more;
+      moreText.style.display = "none";
+      moreBtn.style.display = "inline-block";
+      infoBox.style.display = "block";
+    });
+  });
+
+  // ปุ่มเพิ่มเติม
+  moreBtn.onclick = () => {
+    moreText.style.display = "block";
+    moreBtn.style.display = "none";
+  };
+
+  // ปุ่มปิด
+  document.getElementById("closeBtn").onclick = () => {
+    infoBox.style.display = "none";
+  };
+</script>
+
+</body>
+</html>

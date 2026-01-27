@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>3D Model AR Viewer</title>
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: #f9f9f9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      height: 100vh;
+      overflow-x: hidden;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      text-align: center;
+      margin: 12px 0;
+      color: #333;
+    }
+
+    model-viewer {
+      width: 100%;
+      max-width: 900px;
+      height: auto;
+      aspect-ratio: 1 / 1; /* ปรับตามอุปกรณ์โดยอัตโนมัติ */
+      background: #ddd;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    /* ปุ่ม AR */
+    .ar-button {
+      background: linear-gradient(135deg, #ff6600, #ff9900);
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: bold;
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+      transition: 0.3s;
+    }
+
+    .ar-button:hover {
+      transform: translateX(-50%) scale(1.05);
+    }
+
+    footer {
+      margin: 15px 0;
+      font-size: 0.9rem;
+      color: #666;
+      text-align: center;
+    }
+
+    /* 📱 สำหรับมือถือแนวตั้ง */
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.2rem;
+      }
+      model-viewer {
+        aspect-ratio: 4 / 5; /* ปรับสัดส่วนให้เต็มจอมือถือแนวตั้ง */
+      }
+    }
+
+    /* 📱 สำหรับ iPad หรือแท็บเล็ต */
+    @media (min-width: 481px) and (max-width: 1024px) {
+      model-viewer {
+        aspect-ratio: 3 / 2; /* ดูเต็มจอแนวนอนของ iPad */
+        max-width: 100%;
+      }
+    }
+
+    /* 💻 สำหรับ desktop จอใหญ่ */
+    @media (min-width: 1025px) {
+      model-viewer {
+        aspect-ratio: 16 / 9;
+        max-width: 900px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>ห้องปฏิบัติการ บรรยายเลคเชอร์</h1>
+
+  <model-viewer
+    id="viewer"
+    src="https://modelagency.pw/roomtest506active%20action.glb"
+    ios-src="https://modelagency.pw/roomtest506action.usdz"
+    alt="3D model"
+    ar
+    ar-modes="webxr scene-viewer quick-look"
+    camera-controls
+    auto-rotate
+    autoplay
+    animation-loop>
+    
+    <button slot="ar-button" class="ar-button">
+      👓 View in AR
+    </button>
+  </model-viewer>
+
+  <footer>© 2025 My AR Model</footer>
+</body>
+</html>
