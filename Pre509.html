@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>3D Model AR Viewer with Hotspots</title>
+
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      margin: 0;
+      background: #f0f0f0;
+      text-align: center;
+    }
+
+    model-viewer {
+      width: 100%;
+      max-width: 900px;
+      height: 500px;
+      background: #ddd;
+      margin: 20px auto;
+      border-radius: 12px;
+    }
+
+    .hotspot-btn {
+      width: 18px;
+      height: 18px;
+      background: #00ff00;
+      border: 3px solid white;
+      border-radius: 50%;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+      pointer-events: all;
+      transform: none !important;
+      contain: layout style paint;
+    }
+
+    /* กล่องข้อความ */
+    #infoBox {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: white;
+      padding: 18px 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      font-size: 1rem;
+      display: none;
+      max-width: 320px;
+      z-index: 1000;
+      text-align: left;
+    }
+
+    /* Slider */
+    #slider {
+      position: relative;
+      margin-bottom: 10px;
+    }
+
+      #slideImage {
+  width: 100%;
+  max-height: 160px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+    #prev, #next {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.6);
+      color: white;
+      border: none;
+      font-size: 16px;
+      padding: 6px 10px;
+      cursor: pointer;
+      border-radius: 50%;
+    }
+
+    #prev { left: 5px; }
+    #next { right: 5px; }
+
+    #closeBtn, #moreBtn {
+      margin-top: 10px;
+      padding: 6px 14px;
+      border: none;
+      background: #ff6600;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    #moreText {
+      display: none;
+      margin-top: 10px;
+      color: #333;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+
+<h2>ห้องปฏิบัติการ VR (Virtual Reality)</h2>
+
+<model-viewer id="viewer"
+    src="https://modelagency.pw/room509_active.glb"
+    ios-src="https://modelagency.pw/room509ios_actions.usdz"
+  ar
+  ar-modes="webxr scene-viewer quick-look"
+  camera-controls
+  animation-loop /* 🟢 FIX: เล่นอนิเมชั่นวนซ้ำ */
+  autoplay /* 🟢 FIX: เริ่มเล่นอนิเมชั่นทันที */
+  environment-image="neutral"
+>
+
+  <!-- ⭐ Hotspot จุดสีเขียว -->
+  <button
+    class="hotspot-btn"
+    slot="hotspot-hotspot1"
+    data-position="3.1 1.5 -2"
+    data-normal="0 1 0"
+    data-info="VR (Virtual Reality)"
+    data-more="แว่น VR คืออุปกรณ์ที่ใช้ หน้าจอ, เลนส์, และเซนเซอร์ติดตาม เพื่อสร้างภาพ 3 มิติ และติดตามการเคลื่อนไหวของร่างกายเรา ทำให้เราสามารถมองเห็นและโต้ตอบกับโลกที่ถูกสร้างขึ้นมาได้อย่างสมจริง"
+    data-images="pic/pre509_1.jpg|pic/pre509_2.jpg|pic/pre509_3.jpg|pic/pre509_4.jpg"
+  ></button>
+
+
+</model-viewer>
+ 
+
+
+<!-- 🔶 กล่องข้อความ -->
+<div id="infoBox">
+
+  <div id="slider">
+    <button id="prev">◀</button>
+    <img id="slideImage" src="">
+    <button id="next">▶</button>
+  </div>
+
+  <strong id="infoText"></strong><br>
+
+  <button id="moreBtn">เพิ่มเติม</button>
+  <div id="moreText"></div>
+
+  <button id="closeBtn">ปิด</button>
+</div>
+
+<script>
+  const infoBox = document.getElementById("infoBox");
+  const infoText = document.getElementById("infoText");
+  const moreText = document.getElementById("moreText");
+  const moreBtn = document.getElementById("moreBtn");
+
+  const slideImage = document.getElementById("slideImage");
+  const prevBtn = document.getElementById("prev");
+  const nextBtn = document.getElementById("next");
+
+  let images = [];
+  let index = 0;
+
+  document.querySelectorAll(".hotspot-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      infoText.innerText = btn.dataset.info;
+      moreText.innerText = btn.dataset.more;
+
+      images = btn.dataset.images.split("|");
+      index = 0;
+      slideImage.src = images[index];
+
+      moreText.style.display = "none";
+      moreBtn.style.display = "inline-block";
+      infoBox.style.display = "block";
+    });
+  });
+
+  nextBtn.onclick = () => {
+    index = (index + 1) % images.length;
+    slideImage.src = images[index];
+  };
+
+  prevBtn.onclick = () => {
+    index = (index - 1 + images.length) % images.length;
+    slideImage.src = images[index];
+  };
+
+  moreBtn.onclick = () => {
+    moreText.style.display = "block";
+    moreBtn.style.display = "none";
+  };
+
+  document.getElementById("closeBtn").onclick = () => {
+    infoBox.style.display = "none";
+  };
+</script>
+
+</body>
+</html>
